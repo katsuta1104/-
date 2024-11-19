@@ -1,4 +1,6 @@
 #import codey,rocky,time,event
+#from collections import deque ←使えない
+#from itertools import permutations　←使えない
 
 def diside():
     #シャープが移動不可、ドットが移動可
@@ -27,10 +29,10 @@ def diside():
 
     return grid,target
 
-from collections import deque
 
-#BFS(幅優先探索)を用いることで最短距離を計算する
 def bfs(grid,start,goal):
+    #BFS(幅優先探索)を用いることで最短距離を計算する
+    
     H,W = len(grid),len(grid[0])
     directions = [(-1,0),(1,0),(0,-1),(0,1)]
     directions_names = ["U","D","L","P"]
@@ -73,7 +75,7 @@ def matrix(grid,target):
     return dis
 
 
-from itertools import permutations
+
 
 def tsp(dis):
     N=len(dis)
@@ -93,17 +95,12 @@ def tsp(dis):
     
     return min_dist,best_path
 
-dist = matrix(grid,target)
-min_dist,best_path = tsp(dist)
-best_path = list(best_path)
-#最短経路探索終了
-print("最短経路:",*best_path)
-print("距離:",min_dist)
 
-#具体的なpathを構築する
-#S:直進,L:反時計回りに90°回転,R:時計回りに90°回転,Wが頂点に到着した時に待つ
 
 def generate(grid,target,path):
+    #具体的なpathを構築する
+    #S:直進,L:反時計回りに90°回転,R:時計回りに90°回転,Wが頂点に到着した時に待つ
+
     current_direction = "U"
     direction = {(-1,0):"U",(1,0):"D",(0,-1):"L",(0,1):"R"}
     move = ""
@@ -143,8 +140,7 @@ def generate(grid,target,path):
     return move
                            
     
-path = generate(grid,target,best_path)
-print(path)
+
 
 def codey_move(path):
     dist=1 #一マスあたりの移動距離
@@ -176,4 +172,17 @@ def codey_move(path):
 
 def main():
     grid,target = diside()
-codey_move(path)
+    dist = matrix(grid,target)
+    min_dist,best_path = tsp(dist)
+    best_path = list(best_path)
+    
+    #最短経路探索終了
+    
+    print("最短経路:",*best_path)
+    print("距離:",min_dist)
+
+    path = generate(grid,target,best_path)
+    print(path)
+
+    
+    codey_move(path)
