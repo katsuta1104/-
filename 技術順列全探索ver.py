@@ -1,6 +1,33 @@
 #import codey,rocky,time,event
-#from collections import deque ←使えない
-#from itertools import permutations　←使えない
+
+class Queue(object):
+    def __init__(self):
+        self.s1 = []
+        self.s2 = []
+    
+    def push(self,x):
+        while self.s1:
+            self.s2.append(self.s1.pop())
+        self.s1.append(x)
+        while self.s2:
+            self.s1.append(self.s2.pop())
+    
+    def popleft(self):
+        return self.s1.pop()
+    
+    def front(self):
+        return self.s1[-1]
+
+def permutation(my_list):
+    if len(my_list) == 1:
+        return [my_list]
+    else:
+        result = []
+        for i in range(len(my_list)):
+            rest = permutation(my_list[:i] + my_list[i+1:])
+            for rest_perm in rest:
+                result.append([my_list[i]]+rest_perm)
+        return result
 
 def diside():
     #シャープが移動不可、ドットが移動可
@@ -36,7 +63,9 @@ def bfs(grid,start,goal):
     H,W = len(grid),len(grid[0])
     directions = [(-1,0),(1,0),(0,-1),(0,1)]
     directions_names = ["U","D","L","P"]
-    queue = deque([(start[0],start[1],0)])
+    queue = Queue()
+    queue.push((start[0],start[1],0))
+    
     visited = set()
     visited.add(start)
     parent = {start:None}
@@ -57,7 +86,7 @@ def bfs(grid,start,goal):
             if 0<=ny<H and 0<=nx<W and (ny,nx) not in visited and grid[ny][nx]==".":
                 visited.add((ny,nx))
                 parent[(ny,nx)] = (y,x)
-                queue.append((ny,nx,dist+1))
+                queue.push((ny,nx,dist+1))
                 
     #到達できないのでエラーを出力する
     exit(print("達成不可能です！"))
@@ -83,9 +112,10 @@ def tsp(dis):
     best_path = None
     
     for start in range(1,2):
-        for perm in permutations([i for i in range(N) if i !=start]):
+        for perm in permutation([i for i in range(N) if i !=start]):
             dist = 0
-            current_path = (start,) + perm + (start,)
+            
+            current_path = [start] + perm + [start]
             for i in range(len(current_path)-1):
                 dist += dis[current_path[i]][current_path[i+1]]
     
@@ -143,7 +173,7 @@ def generate(grid,target,path):
 
 
 def codey_move(path):
-    dist=1 #一マスあたりの移動距離
+    dist=5.5 #一マスあたりの移動距離
     speed=1 #一秒あたり何cm進むのか(40％基準)
     i = 0
     while i < len(path):
@@ -186,3 +216,5 @@ def main():
 
     
     codey_move(path)
+
+main()
